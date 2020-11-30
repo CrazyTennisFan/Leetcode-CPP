@@ -28,3 +28,35 @@ Constraints:
 
 1 <= moves.length <= 2 * 104
 moves only contains the characters 'U', 'D', 'L' and 'R'.
+
+
+
+class Solution {
+public:
+    bool judgeCircle(string moves) {
+        if(moves.length() == 0){
+            return true;
+        }
+        
+        auto x = 0;
+        auto y = 0;
+        
+        for(const auto& c : moves){
+            if(c == 'R')
+            {
+                ++x;
+            }
+            else if(c == 'L'){
+                --x;
+            }
+            else if(c == 'U'){
+                ++y;
+            }
+            else if(c == 'D'){
+                --y;
+            }
+        }
+        
+        return (x == 0) && ( y == 0 );
+    }
+};
