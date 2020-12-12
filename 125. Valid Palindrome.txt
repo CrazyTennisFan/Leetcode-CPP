@@ -1,0 +1,69 @@
+125. Valid Palindrome
+
+Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+
+Note: For the purpose of this problem, we define empty string as valid palindrome.
+
+Example 1:
+
+Input: "A man, a plan, a canal: Panama"
+Output: true
+Example 2:
+
+Input: "race a car"
+Output: false
+ 
+
+Constraints:
+
+s consists only of printable ASCII characters.
+
+class Solution {
+public:
+    //isdigit()
+    //isalpha()
+    bool isPalindrome(string s) {
+        if(s.size() == 0){
+            return true;
+        }
+        
+        int l = 0;
+        int r = s.size()-1;
+        
+        while(l < r){
+            while(l < s.size() && !isdigit(s[l]) && !isalpha(s[l])){
+                l++;
+            }
+            
+            while(r >= 0 && !isdigit(s[r]) && !isalpha(s[r])){
+                --r;
+            }
+            
+            if(l < r){
+                char cl = charToLowerCase(s[l]);
+                char cr = charToLowerCase(s[r]);
+                
+                if(cl == cr){
+                    l++;
+                    r--;
+                }
+                else{
+                    return false;
+                }
+                
+            }
+        }
+        
+        return true;
+    }
+    
+    char charToLowerCase(char c){
+        int diff = 'a'-'A';
+        
+        if(c >= 'A' && c <='Z'){
+            return c+diff;
+        }
+        
+        return c;
+    }
+};
