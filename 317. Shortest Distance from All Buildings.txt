@@ -1,0 +1,126 @@
+317. Shortest Distance from All Buildings
+
+You want to build a house on an empty land which reaches all buildings in the shortest amount of distance. You can only move up, down, left and right. You are given a 2D grid of values 0, 1 or 2, where:
+
+Each 0 marks an empty land which you can pass by freely.
+Each 1 marks a building which you cannot pass through.
+Each 2 marks an obstacle which you cannot pass through.
+Example:
+
+Input: [[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
+
+1 - 0 - 2 - 0 - 1
+|   |   |   |   |
+0 - 0 - 0 - 0 - 0
+|   |   |   |   |
+0 - 0 - 1 - 0 - 0
+
+Output: 7 
+
+Explanation: Given three buildings at (0,0), (0,4), (2,2), and an obstacle at (0,2),
+             the point (1,2) is an ideal empty land to build a house, as the total 
+             travel distance of 3+3+1=7 is minimal. So return 7.
+Note:
+There will be at least one building. If it is not possible to build such house according to the above rules, return -1.
+
+struct Node{
+    int x;
+    int y;
+    Node(int a, int b):x(a), y(b){
+        
+    }
+};
+
+class Solution {
+public:
+    int shortestDistance(vector<vector<int>>& grid) {
+        if(grid.size() == 0 || grid[0].size() == 0){
+            return -1;
+        }
+        
+        int row = grid.size();
+        int col = grid[0].size();
+        
+        vector<Node> setOfPoints;
+        int originBuildNum = 0;
+        vector<vector<bool>> origin_visited(row, vector<bool>(col, false));
+        
+        for(int i = 0; i < row; i++){
+            for(int j = 0; j<col; j++){
+                if(grid[i][j] == 0){
+                    Node p(i,j);
+                    setOfPoints.push_back(p);
+                }
+                
+                if(grid[i][j] == 1){
+                    originBuildNum++;
+                }
+            }
+        }
+        
+        vector<vector<bool>> visited;
+        int buildNum = 0;
+        int result = INT_MAX;
+        
+        for(Node point: setOfPoints){
+  
+            vector<vector<bool>> visited = origin_visited;
+            buildNum = originBuildNum;
+            
+            queue<Node> q;
+            q.push(point);
+            visited[point.x][point.y] = true;
+            int step = 0;
+            int sum = 0;
+            
+            while(q.size() != 0){
+                step++;
+                int size = q.size();
+                for(int i = 0; i < size; i++){
+                    Node cur_p = q.front();
+                    int cur_x = cur_p.x;
+                    int cur_y = cur_p.y;
+                    
+                    int dx[4] = {0,1,0,-1};
+                    int dy[4] = {1,0,-1,0};
+                    
+                    for(int j =0; j< 4; j++){
+                        int next_x = cur_x + dx[j];
+                        int next_y = cur_y + dy[j];
+                        
+                        if(next_x >= 0 && next_x < row && next_y >= 0 && next_y < col){
+                            if(grid[next_x][next_y] == 1 && !visited[next_x][next_y]){
+                                visited[next_x][next_y] = true;
+                                sum += step;
+                                buildNum--;
+                            }
+                            else if(grid[next_x][next_y] == 0 && !visited[next_x][next_y]){
+                                visited[next_x][next_y] = true;
+                                Node t_p(next_x, next_y);
+                                q.push(t_p);
+                            }
+                        }
+                    }
+                    
+                    q.pop();
+                }
+                
+                if(buildNum == 0){
+                    break;
+                }
+            }
+            
+            if(buildNum == 0){
+                result = min(result, sum);
+            }
+            
+            
+        }
+        
+        if(result == INT_MAX){
+            return -1;
+        }
+        
+         return result;
+    }
+};
