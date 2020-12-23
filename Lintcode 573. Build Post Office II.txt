@@ -1,0 +1,126 @@
+573. Build Post Office II
+
+Description
+Given a 2D grid, each cell is either a wall 2, an house 1 or empty 0 (the number zero, one, two), find a place to build a post office so that the sum of the distance from the post office to all the houses is smallest.
+
+Return the smallest sum of distance. Return -1 if it is not possible.
+
+You cannot pass through wall and house, but can pass through empty.
+You only build post office on an empty.
+
+Example
+Example 1:
+
+Input：[[0,1,0,0,0],[1,0,0,2,1],[0,1,0,0,0]]
+Output：8
+Explanation： Placing a post office at (1,1), the distance that post office to all the house sum is smallest.
+Example 2:
+
+Input：[[0,1,0],[1,0,1],[0,1,0]]
+Output：4
+Explanation： Placing a post office at (1,1), the distance that post office to all the house sum is smallest.
+
+
+struct Node{
+    int x;
+    int y;
+    Node(int a, int b):x(a), y(b){
+        
+    }
+};
+
+class Solution {
+public:
+    /**
+     * @param grid: a 2D grid
+     * @return: An integer
+     */
+    int shortestDistance(vector<vector<int>> &grid) {
+        // write your code here
+        int row = grid.size();
+        int col = grid[0].size();
+        
+        vector<Node> setOfPoints;
+        int originBuildNum = 0;
+        vector<vector<bool>> origin_visited(row, vector<bool>(col, false));
+        
+        for(int i = 0; i < row; i++){
+            for(int j = 0; j<col; j++){
+                if(grid[i][j] == 0){
+                    Node p(i,j);
+                    setOfPoints.push_back(p);
+                }
+                
+                if(grid[i][j] == 1){
+                    originBuildNum++;
+                }
+            }
+        }
+        
+        vector<vector<bool>> visited;
+        int buildNum = 0;
+        int result = INT_MAX;
+        
+        
+        
+        for(Node point: setOfPoints){
+  
+            vector<vector<bool>> visited = origin_visited;
+            buildNum = originBuildNum;
+            
+            queue<Node> q;
+            q.push(point);
+            visited[point.x][point.y] = true;
+            int step = 0;
+            int sum = 0;
+            
+            while(q.size() != 0){
+                step++;
+                int size = q.size();
+                for(int i = 0; i < size; i++){
+                    Node cur_p = q.front();
+                    int cur_x = cur_p.x;
+                    int cur_y = cur_p.y;
+                    
+                    int dx[4] = {0,1,0,-1};
+                    int dy[4] = {1,0,-1,0};
+                    
+                    for(int j =0; j< 4; j++){
+                        int next_x = cur_x + dx[j];
+                        int next_y = cur_y + dy[j];
+                        
+                        if(next_x >= 0 && next_x < row && next_y >= 0 && next_y < col){
+                            if(grid[next_x][next_y] == 1 && !visited[next_x][next_y]){
+                                visited[next_x][next_y] = true;
+                                sum += step;
+                                buildNum--;
+                            }
+                            else if(grid[next_x][next_y] == 0 && !visited[next_x][next_y]){
+                                visited[next_x][next_y] = true;
+                                Node t_p(next_x, next_y);
+                                q.push(t_p);
+                            }
+                        }
+                    }
+                    
+                    q.pop();
+                }
+                
+                if(buildNum == 0){
+                    break;
+                }
+            }
+            
+            if(buildNum == 0){
+                result = min(result, sum);
+            }
+            
+            
+        }
+        
+        if(result == INT_MAX){
+            return -1;
+        }
+        return result;
+    }
+};
