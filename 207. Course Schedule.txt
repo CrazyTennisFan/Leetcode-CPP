@@ -33,52 +33,39 @@ You may assume that there are no duplicate edges in the input prerequisites.
 class Solution {
 public:
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-         if(prerequisites.size() == 0){
-            return true;
-        }
-
+        
+         vector<int> count(numCourses, 0);
+        
         //create graph
         map<int, vector<int>> graph; 
-        std::set<int> hash;
         for(auto it: prerequisites){
             graph[it[1]].push_back(it[0]);
-        }
-        
-        map<int, int> count;
-        for(auto it: prerequisites){
             count[it[0]]++;
         }
         
         queue<int> q;
-        for(auto it: prerequisites){
-            if(count[it[1]] == 0 && hash.find(it[1]) == hash.end()){
-                q.push(it[1]);
-                hash.insert(it[1]);
+        for(int i = 0; i < numCourses; i++){
+            if(count[i] == 0){
+                q.push(i);
             }
         }
         
+        int courses = 0;
+   
         while(q.size() != 0){
-            int size = q.size();           
-            for(int i = 0; i < size; i++){
-                int course = q.front();            
-                for(auto it: graph[course]){                    
-                    count[it]--;
-                    if(count[it] == 0){                        
-                        q.push(it);
-                    }
-                }                
-                q.pop();
-            }
+            courses++;
+            int course = q.front();            
+            q.pop();
+            
+            for(auto it: graph[course]){                    
+                count[it]--;
+                if(count[it] == 0){                        
+                    q.push(it);
+                }
+            }                
+  
         }
         
-        
-        for(auto it: count){
-            if(it.second > 0){
-                return false;
-            }
-        }
-        
-        
-        return true;
+        return courses == numCourses;
     }
 };
