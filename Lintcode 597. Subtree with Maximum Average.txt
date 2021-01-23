@@ -1,0 +1,125 @@
+597. Subtree with Maximum Average
+
+Description
+Given a binary tree, find the subtree with maximum average. Return the root of the subtree.
+
+LintCode will print the subtree which root is your return node.
+It's guaranteed that there is only one subtree with maximum average.
+
+Example
+Example 1
+
+Input：
+{1,-5,11,1,2,4,-2}
+Output：11
+Explanation:
+The tree is look like this:
+     1
+   /   \
+ -5     11
+ / \   /  \
+1   2 4    -2 
+The average of subtree of 11 is 4.3333, is the maximun.
+Example 2
+
+Input：
+{1,-5,11}
+Output：11
+Explanation:
+     1
+   /   \
+ -5     11
+The average of subtree of 1,-5,11 is 2.333,-5,11. So the subtree of 11 is the maximun.
+
+
+/**
+ * Definition of TreeNode:
+ * class TreeNode {
+ * public:
+ *     int val;
+ *     TreeNode *left, *right;
+ *     TreeNode(int val) {
+ *         this->val = val;
+ *         this->left = this->right = NULL;
+ *     }
+ * }
+ */
+ 
+ 
+class Info{
+ 
+public: 
+    double sum;
+    int number;
+    double max;
+    TreeNode* node;
+    
+public:
+    Info(double sum, int number, double max, TreeNode* node){
+        this->sum = sum;
+        this->number = number;
+        this->max = max;
+        this->node = node;
+    }
+    
+};
+
+class Solution {
+public:
+    /**
+     * @param root: the root of binary tree
+     * @return: the root of the maximum average of subtree
+     */
+    TreeNode * findSubtree2(TreeNode * root) {
+        if(root == nullptr){
+            return root;
+        }
+        // write your code here
+        return helper(root)->node;
+    }
+    
+    
+    Info* helper(TreeNode* node){
+        if(node->left == nullptr && node->right == nullptr){
+            new Info(node->val, 1, node->val, node);
+        }
+        
+        Info* left = nullptr;
+        Info* right = nullptr;
+        double sum = node->val;
+        int number = 1;
+        
+        if(node->left != nullptr){
+            left = helper(node->left);
+            sum += left->sum;
+            number += left->number;
+        }
+        
+        if(node->right != nullptr){
+            right = helper(node->right);
+            sum += right->sum;
+            number += right->number;
+        }
+        
+        double cur_average_max = sum / number;
+        TreeNode* cur_max = node;
+        
+        if(left != nullptr){
+            if(cur_average_max < left->max){
+                cur_average_max = left->max;
+                cur_max = left->node;
+            }
+        }
+        
+        if(right != nullptr){
+            if(cur_average_max < right->max){
+                cur_average_max = right->max;
+                cur_max = right->node;
+            }
+        }
+     
+        return new Info(sum, number, cur_average_max, cur_max);
+        
+    }
+    
+};

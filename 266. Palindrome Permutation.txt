@@ -1,0 +1,44 @@
+266. Palindrome Permutation
+
+Given a string, determine if a permutation of the string could form a palindrome.
+
+Example 1:
+
+Input: "code"
+Output: false
+Example 2:
+
+Input: "aab"
+Output: true
+Example 3:
+
+Input: "carerac"
+Output: true
+
+class Solution {
+public:
+    bool canPermutePalindrome(string s) {
+        if(s.length() <= 1){
+            return true;
+        }
+        
+        map<char, int> count;
+        for(char c: s){
+            count[c]++;
+        }
+        
+        bool hasOdd = false;
+        for(auto it = count.begin(); it != count.end(); it++){
+            if(it->second%2 == 1){
+                if(!hasOdd){
+                    hasOdd = true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+};
